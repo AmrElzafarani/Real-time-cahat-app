@@ -60,3 +60,41 @@ UserController.post('/login', async (req, res, next) => {
     }
 })
 
+//Set Avatar image
+UserController.post("/setAvatar/:id", async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const avatarImage = req.body.image;
+        const userData = await User.findByIdAndUpdate(userId, {
+            isAvatarImageSet: true,
+            avatarImage
+        });
+        return res.json({
+            isSet: userData.isAvatarImageSet,
+            image: userData.avatarImage,
+        });
+    } catch(error) {
+        next(error)
+    }
+});
+
+//Get All Users except loggedIn user
+UserController.get("/allUsers/:id", async (req, res, next) => {
+    try {
+        const users = await User.find({_id: {$ne: req.params.id}}).select([
+            "email",
+            "username",
+            "avatarImage",
+            "_id"
+        ])
+        if(!users) {
+            return res.status(400).json({
+                success: false,
+            })
+        }
+        res.json(users)
+    } catch (err) {
+        next(err)
+    }
+})
+

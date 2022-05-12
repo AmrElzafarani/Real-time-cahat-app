@@ -23,9 +23,28 @@ function SetAvatar() {
         theme: "dark",
     };
 
+    useEffect(() => {
+        if(!localStorage.getItem('user')) {
+            navigate("/login")
+        }
+    },[])
+
     const setProfilePicture = async() => {
         if(selectedAvatar === undefined) {
             toast.error("Please select avatar", toastOptions)
+        } else {
+            const user = await JSON.parse(localStorage.getItem("user"));
+            const {data} = await axios.post(`${setAvatarRoute}/${user._id}`, {
+                image: avatars[selectedAvatar],
+            });
+            if(data.isSet) {
+                user.isAvatarImageSet = true;
+                user.avatarImage = data.image;
+                localStorage.setItem("user", JSON.stringify(user));
+                navigate("/");
+            } else {
+                toast.error("Error setting avatar. Please try again", toastOptions)
+            }
         }
     };
     useEffect( () => {
@@ -56,7 +75,7 @@ function SetAvatar() {
                         <div className="avatars">
                             {avatars.map((avatar, index) => {
                                 return (
-                                    <div
+                                    <div key={index}
                                         className={`avatar ${
                                             selectedAvatar === index ? "selected" : ""
                                         }`}

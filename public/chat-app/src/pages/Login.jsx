@@ -23,11 +23,11 @@ function Login() {
         theme: "dark"
     };
 
-    useEffect(() => {
-        if(localStorage.getItem('user')) {
-            navigate("/")
-        }
-    },[])
+    // useEffect(() => {
+    //     if(localStorage.getItem('user')) {
+    //         navigate("/")
+    //     }
+    // },[])
 
     const handleValidation = () => {
         const {password, username} = values;
